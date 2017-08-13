@@ -12,3 +12,6 @@ API 密钥。
 3. 将密钥添加到 HTTP 请求最后，作为 URL 参数，如下所示
 http://api.themoviedb.org/3/movie/popular?api_key=[YOUR_API_KEY]
 4. 从请求的返回结果中提取出电影 ID。在后续请求中，你会用到这个ID。
+
+#替换key
+将gradle.properties中的MyOpenMovieApiKey替换成你自己的才能运行
