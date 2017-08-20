@@ -1,10 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.jam.pmovie.detail.MovieDetailActivity">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-</android.support.constraint.ConstraintLayout>
+        <TextView
+            android:id="@+id/tv_detail_movie_name"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@color/green"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            tools:text="Chappie"/>
+
+        <ImageView
+            android:id="@+id/iv_detail_movie_cover"
+            android:layout_marginTop="10dp"
+            android:layout_width="100dp"
+            android:layout_height="150dp"
+            android:layout_below="@+id/tv_detail_movie_name"
+            android:layout_marginLeft="10dp"
+            app:srcCompat="@drawable/default_movie_icon"/>
+
+        <TextView
+            android:id="@+id/tv_detail_movie_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_detail_movie_name"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_toRightOf="@+id/iv_detail_movie_cover"
+            tools:text="上映日期："/>
+
+        <TextView
+            android:id="@+id/tv_detail_movie_rate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_detail_movie_time"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_toRightOf="@+id/iv_detail_movie_cover"
+            tools:text="评分："/>
+
+        <TextView
+            android:id="@+id/tv_detail_movie_overview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/iv_detail_movie_cover"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            tools:text="剧情简介："/>
+    </RelativeLayout>
+</ScrollView>
