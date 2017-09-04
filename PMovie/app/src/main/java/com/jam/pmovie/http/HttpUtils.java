@@ -27,6 +27,8 @@ public class HttpUtils {
     private static final String URL_MOVIE_POPULAR= "movie/popular";
     private static final String URL_MOVIE_TOP_RATED= "movie/top_rated";
     private static final String PARAM_API_KEY = "api_key";
+    private static final int DEFAULT_TIMEOUT = 10000;
+    private static final int DEFAULT_READ_TIMEOUT= 10000;
 
     public static Observable<MovieListBean> getMovieList(boolean isPopular) {
         return Observable.just(isPopular).flatMap(new Func1<Boolean, Observable<MovieListBean>>() {
@@ -51,6 +53,8 @@ public class HttpUtils {
         try {
             URL url = new URL(urlStr);
             httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.setConnectTimeout(DEFAULT_TIMEOUT);
+            httpURLConnection.setReadTimeout(DEFAULT_READ_TIMEOUT);
 
             InputStream in = httpURLConnection.getInputStream();
 

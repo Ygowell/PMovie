@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.jam.pmovie.R;
-import com.jam.pmovie.bean.MovieListBean;
+import com.jam.pmovie.bean.MovieInfo;
 import com.jam.pmovie.http.HttpUtils;
 
 import java.util.List;
@@ -25,14 +25,14 @@ import butterknife.ButterKnife;
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MovieListViewHolder> {
 
     private Context mContext;
-    private List<MovieListBean.MovieInfo> mMovieInfoList;
+    private List<MovieInfo> mMovieInfoList;
     private OnMovieItemClickListener mMovieItemClickListener;
 
     public MovieListAdapter(Context context) {
         mContext = context;
     }
 
-    public void setData(List<MovieListBean.MovieInfo> movieInfoList) {
+    public void setData(List<MovieInfo> movieInfoList) {
         mMovieInfoList = movieInfoList;
         notifyDataSetChanged();
     }

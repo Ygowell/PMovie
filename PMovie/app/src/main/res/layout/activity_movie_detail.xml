@@ -11,21 +11,21 @@
         <TextView
             android:id="@+id/tv_detail_movie_name"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="@dimen/movie_name_height"
             android:background="@color/green"
             android:gravity="center_vertical"
-            android:paddingLeft="10dp"
+            android:paddingLeft="@dimen/margin_medium"
             android:textColor="@color/white"
-            android:textSize="20sp"
+            android:textSize="@dimen/text_large_size"
             tools:text="Chappie"/>
 
         <ImageView
             android:id="@+id/iv_detail_movie_cover"
-            android:layout_marginTop="10dp"
-            android:layout_width="100dp"
-            android:layout_height="150dp"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:layout_width="@dimen/detail_movie_image_width"
+            android:layout_height="@dimen/detail_movie_image_height"
             android:layout_below="@+id/tv_detail_movie_name"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="@dimen/margin_medium"
             app:srcCompat="@drawable/default_movie_icon"/>
 
         <TextView
@@ -33,8 +33,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_detail_movie_name"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginLeft="@dimen/margin_large"
+            android:layout_marginTop="@dimen/margin_large"
             android:layout_toRightOf="@+id/iv_detail_movie_cover"
             tools:text="上映日期："/>
 
@@ -43,8 +43,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_detail_movie_time"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginLeft="@dimen/margin_large"
+            android:layout_marginTop="@dimen/margin_large"
             android:layout_toRightOf="@+id/iv_detail_movie_cover"
             tools:text="评分："/>
 
@@ -53,9 +53,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/iv_detail_movie_cover"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginLeft="@dimen/margin_medium"
+            android:layout_marginRight="@dimen/margin_medium"
+            android:layout_marginTop="@dimen/margin_medium"
             tools:text="剧情简介："/>
     </RelativeLayout>
 </ScrollView>

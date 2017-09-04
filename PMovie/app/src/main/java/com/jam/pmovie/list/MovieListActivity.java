@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.jam.pmovie.BaseActivity;
 import com.jam.pmovie.R;
+import com.jam.pmovie.bean.MovieInfo;
 import com.jam.pmovie.bean.MovieListBean;
 import com.jam.pmovie.common.Constant;
 import com.jam.pmovie.detail.MovieDetailActivity;
@@ -40,7 +41,7 @@ public class MovieListActivity extends BaseActivity implements MovieListAdapter.
     private ActionBar mActionBar;
 
     private MovieListAdapter mMovieListAdapter;
-    private List<MovieListBean.MovieInfo> mMovieInfoList;
+    private List<MovieInfo> mMovieInfoList;
     private boolean mIsPopular = true;
 
     @Override
@@ -122,7 +123,7 @@ public class MovieListActivity extends BaseActivity implements MovieListAdapter.
                 });
     }
 
-    private void showMovieList(List<MovieListBean.MovieInfo> movieInfoList) {
+    private void showMovieList(List<MovieInfo> movieInfoList) {
         mMovieListAdapter.setData(movieInfoList);
     }
 
