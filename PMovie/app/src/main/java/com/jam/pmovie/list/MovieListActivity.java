@@ -19,7 +19,7 @@ import com.jam.pmovie.bean.MovieInfo;
 import com.jam.pmovie.bean.MovieListBean;
 import com.jam.pmovie.common.Constant;
 import com.jam.pmovie.detail.MovieDetailActivity;
-import com.jam.pmovie.http.HttpUtils;
+import com.jam.pmovie.http.AppApi;
 
 import java.util.List;
 
@@ -95,7 +95,7 @@ public class MovieListActivity extends BaseActivity implements MovieListAdapter.
     }
 
     private void requestMovieList(boolean isPopuplar) {
-        HttpUtils.getMovieList(isPopuplar).observeOn(AndroidSchedulers.mainThread())
+        AppApi.getMovieList(isPopuplar).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<MovieListBean>() {
                     @Override
                     public void onStart() {

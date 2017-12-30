@@ -50,9 +50,10 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
     @Override
     public void onBindViewHolder(MovieListViewHolder holder, int position) {
         RequestOptions requestOptions = new RequestOptions();
-        requestOptions.centerCrop().placeholder(R.drawable.default_movie_icon);
+        requestOptions.centerCrop().placeholder(R.drawable.default_movie_icon)
+                .error(R.drawable.default_movie_icon);
         Glide.with(mContext)
-                .load(HttpUtils.MOVIE_PIC_URL + mMovieInfoList.get(position).getPoster_path())
+                .load(HttpUtils.MOVIE_PIC_URL + mMovieInfoList.get(position).getPosterPath())
                 .apply(requestOptions)
                 .into(holder.mMovieCoverIv);
     }

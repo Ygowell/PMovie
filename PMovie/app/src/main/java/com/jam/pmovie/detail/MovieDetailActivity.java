@@ -1,8 +1,10 @@
 package com.jam.pmovie.detail;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -14,7 +16,7 @@ import com.jam.pmovie.BaseActivity;
 import com.jam.pmovie.R;
 import com.jam.pmovie.bean.MovieInfo;
 import com.jam.pmovie.common.Constant;
-import com.jam.pmovie.http.HttpUtils;
+import com.jam.pmovie.http.UrlUtils;
 
 import butterknife.BindView;
 
@@ -65,7 +67,7 @@ public class MovieDetailActivity extends BaseActivity {
         requestOptions.centerCrop().placeholder(R.drawable.default_movie_icon)
                 .error(R.drawable.default_movie_icon);
         Glide.with(this)
-                .load(HttpUtils.MOVIE_PIC_URL + mMovieInfo.getPoster_path())
+                .load(UrlUtils.getPicUrl(mMovieInfo.getPosterPath()))
                 .apply(requestOptions)
                 .into(mMovieCoverIv);
     }
@@ -73,7 +75,14 @@ public class MovieDetailActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            NavUtils.navigateUpFromSameTask(this);
+            Intent upIntent = NavUtils.getParentActivityIntent(this);
+            if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+                TaskStackBuilder.create(this)
+                        .addNextIntentWithParentStack(upIntent)
+                        .startActivities();
+            } else {
+                NavUtils.navigateUpFromSameTask(this);
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);
