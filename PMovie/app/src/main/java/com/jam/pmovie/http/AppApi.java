@@ -10,10 +10,9 @@ import rx.Observable;
 
 public class AppApi {
 
-    public static Observable<MovieListBean> getMovieList(boolean isPopular) {
+    public static Observable<MovieListBean> getMovieList(String reqStuffix) {
         OkHttpService<MovieListBean> service = new OkHttpService<>(MovieListBean.class);
-        String stuffix = isPopular ? "/popular" : "/top_rated";
-        String url = UrlUtils.COMMON_URL + stuffix;
+        String url = UrlUtils.COMMON_URL + reqStuffix;
         return service.execute(url);
     }
 }

@@ -3,8 +3,7 @@ package com.jam.pmovie.bean;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by jam on 17/9/4.
@@ -12,50 +11,60 @@ import java.util.List;
 
 public class MovieInfo implements Parcelable {
     /**
-     * vote_count : 4064
+     * voteCount : 4064
      * id : 211672
      * video : false
-     * vote_average : 6.4
+     * voteAverage : 6.4
      * title : Minions
      * popularity : 197.822758
-     * poster_path : /q0R4crx2SehcEEQEkYObktdeFy.jpg
+     * posterPath : /q0R4crx2SehcEEQEkYObktdeFy.jpg
      * original_language : en
      * original_title : Minions
      * genre_ids : [10751,16,12,35]
      * backdrop_path : /uX7LXnsC7bZJZjn048UCOwkPXWJ.jpg
      * adult : false
      * overview : Minions Stuart, Kevin and Bob are recruited by Scarlet Overkill, a super-villain who, alongside her inventor husband Herb, hatches a plot to take over the world.
-     * release_date : 2015-06-17
+     * releaseDate : 2015-06-17
      */
 
-    private int vote_count;
-    private int id;
+    @SerializedName("vote_count")
+    private int voteCount;
+    private long id;
     private boolean video;
-    private double vote_average;
+    @SerializedName("vote_average")
+    private String voteAverage;
     private String title;
-    private double popularity;
-    private String poster_path;
-    private String original_language;
-    private String original_title;
-    private String backdrop_path;
+    private String popularity;
+    @SerializedName("poster_path")
+    private String posterPath;
+    @SerializedName("original_language")
+    private String orgLanguage;
+    @SerializedName("original_title")
+    private String orgTitle;
+    @SerializedName("backdrop_path")
+    private String backdropPath;
     private boolean adult;
     private String overview;
-    private String release_date;
-    private List<Integer> genre_ids;
+    @SerializedName("release_date")
+    private String releaseDate;
 
-    public int getVote_count() {
-        return vote_count;
+    private boolean collected; // 是否收藏（本地使用）
+    private boolean loaded; // 是否请求过时长、预告片和评论
+    private int sortType; // 0: 最受欢迎 1: 最佳评分
+
+    public int getVoteCount() {
+        return voteCount;
     }
 
-    public void setVote_count(int vote_count) {
-        this.vote_count = vote_count;
+    public void setVoteCount(int voteCount) {
+        this.voteCount = voteCount;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -67,12 +76,12 @@ public class MovieInfo implements Parcelable {
         this.video = video;
     }
 
-    public double getVote_average() {
-        return vote_average;
+    public String getVoteAverage() {
+        return voteAverage;
     }
 
-    public void setVote_average(double vote_average) {
-        this.vote_average = vote_average;
+    public void setVoteAverage(String voteAverage) {
+        this.voteAverage = voteAverage;
     }
 
     public String getTitle() {
@@ -83,44 +92,44 @@ public class MovieInfo implements Parcelable {
         this.title = title;
     }
 
-    public double getPopularity() {
+    public String getPopularity() {
         return popularity;
     }
 
-    public void setPopularity(double popularity) {
+    public void setPopularity(String popularity) {
         this.popularity = popularity;
     }
 
     public String getPosterPath() {
-        return poster_path;
+        return posterPath;
     }
 
     public void setPosterPath(String poster_path) {
-        this.poster_path = poster_path;
+        this.posterPath = poster_path;
     }
 
-    public String getOriginal_language() {
-        return original_language;
+    public String getOrgLanguage() {
+        return orgLanguage;
     }
 
-    public void setOriginal_language(String original_language) {
-        this.original_language = original_language;
+    public void setOrgLanguage(String orgLanguage) {
+        this.orgLanguage = orgLanguage;
     }
 
-    public String getOriginal_title() {
-        return original_title;
+    public String getOrgTitle() {
+        return orgTitle;
     }
 
-    public void setOriginal_title(String original_title) {
-        this.original_title = original_title;
+    public void setOrgTitle(String original_title) {
+        this.orgTitle = original_title;
     }
 
-    public String getBackdrop_path() {
-        return backdrop_path;
+    public String getBackdropPath() {
+        return backdropPath;
     }
 
-    public void setBackdrop_path(String backdrop_path) {
-        this.backdrop_path = backdrop_path;
+    public void setBackdropPath(String backdrop_path) {
+        this.backdropPath = backdrop_path;
     }
 
     public boolean isAdult() {
@@ -139,20 +148,12 @@ public class MovieInfo implements Parcelable {
         this.overview = overview;
     }
 
-    public String getRelease_date() {
-        return release_date;
+    public String getReleaseDate() {
+        return releaseDate;
     }
 
-    public void setRelease_date(String release_date) {
-        this.release_date = release_date;
-    }
-
-    public List<Integer> getGenre_ids() {
-        return genre_ids;
-    }
-
-    public void setGenre_ids(List<Integer> genre_ids) {
-        this.genre_ids = genre_ids;
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
     }
 
     @Override
@@ -162,41 +163,38 @@ public class MovieInfo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.vote_count);
-        dest.writeInt(this.id);
+        dest.writeInt(this.voteCount);
+        dest.writeLong(this.id);
         dest.writeByte(this.video ? (byte) 1 : (byte) 0);
-        dest.writeDouble(this.vote_average);
+        dest.writeString(this.voteAverage);
         dest.writeString(this.title);
-        dest.writeDouble(this.popularity);
-        dest.writeString(this.poster_path);
-        dest.writeString(this.original_language);
-        dest.writeString(this.original_title);
-        dest.writeString(this.backdrop_path);
+        dest.writeString(this.popularity);
+        dest.writeString(this.posterPath);
+        dest.writeString(this.orgLanguage);
+        dest.writeString(this.orgTitle);
+        dest.writeString(this.backdropPath);
         dest.writeByte(this.adult ? (byte) 1 : (byte) 0);
         dest.writeString(this.overview);
-        dest.writeString(this.release_date);
-        dest.writeList(this.genre_ids);
+        dest.writeString(this.releaseDate);
     }
 
     public MovieInfo() {
     }
 
     protected MovieInfo(Parcel in) {
-        this.vote_count = in.readInt();
-        this.id = in.readInt();
+        this.voteCount = in.readInt();
+        this.id = in.readLong();
         this.video = in.readByte() != 0;
-        this.vote_average = in.readDouble();
+        this.voteAverage = in.readString();
         this.title = in.readString();
-        this.popularity = in.readDouble();
-        this.poster_path = in.readString();
-        this.original_language = in.readString();
-        this.original_title = in.readString();
-        this.backdrop_path = in.readString();
+        this.popularity = in.readString();
+        this.posterPath = in.readString();
+        this.orgLanguage = in.readString();
+        this.orgTitle = in.readString();
+        this.backdropPath = in.readString();
         this.adult = in.readByte() != 0;
         this.overview = in.readString();
-        this.release_date = in.readString();
-        this.genre_ids = new ArrayList<Integer>();
-        in.readList(this.genre_ids, Integer.class.getClassLoader());
+        this.releaseDate = in.readString();
     }
 
     public static final Parcelable.Creator<MovieInfo> CREATOR = new Parcelable.Creator<MovieInfo>() {
@@ -210,4 +208,31 @@ public class MovieInfo implements Parcelable {
             return new MovieInfo[size];
         }
     };
+
+    public boolean isCollected() {
+        return collected;
+    }
+
+    public void setCollected(boolean collected) {
+        this.collected = collected;
+    }
+
+    public boolean isLoaded() {
+        return loaded;
+    }
+
+    public void setLoaded(boolean loaded) {
+        this.loaded = loaded;
+    }
+
+    /**
+     * 0: 最受欢迎 1: 最佳评分
+     */
+    public int getSortType() {
+        return sortType;
+    }
+
+    public void setSortType(int sortType) {
+        this.sortType = sortType;
+    }
 }

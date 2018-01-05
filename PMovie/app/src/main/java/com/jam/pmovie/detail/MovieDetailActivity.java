@@ -58,9 +58,9 @@ public class MovieDetailActivity extends BaseActivity {
     private void showMovieDetail() {
         mMovieNameTv.setText(mMovieInfo.getTitle());
         mMovieRateTv.setText(getResources().getString(R.string.rated,
-                String.valueOf(mMovieInfo.getVote_average())));
+                String.valueOf(mMovieInfo.getVoteAverage())));
         mMovieReleaseDateTv.setText(getResources().getString(R.string.release_date,
-                mMovieInfo.getRelease_date()));
+                mMovieInfo.getReleaseDate()));
         mMovieOverviewTv.setText(getResources().getString(R.string.overview,
                 mMovieInfo.getOverview()));
         RequestOptions requestOptions = new RequestOptions();

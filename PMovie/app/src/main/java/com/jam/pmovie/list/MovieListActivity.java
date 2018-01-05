@@ -17,7 +17,10 @@ import com.jam.pmovie.BaseActivity;
 import com.jam.pmovie.R;
 import com.jam.pmovie.bean.MovieInfo;
 import com.jam.pmovie.bean.MovieListBean;
+import com.jam.pmovie.common.ComUtils;
 import com.jam.pmovie.common.Constant;
+import com.jam.pmovie.data.MovieCpHelper;
+import com.jam.pmovie.data.PrefHelper;
 import com.jam.pmovie.detail.MovieDetailActivity;
 import com.jam.pmovie.http.AppApi;
 
@@ -27,6 +30,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
 
 public class MovieListActivity extends BaseActivity implements MovieListAdapter.OnMovieItemClickListener {
 
@@ -42,7 +46,8 @@ public class MovieListActivity extends BaseActivity implements MovieListAdapter.
 
     private MovieListAdapter mMovieListAdapter;
     private List<MovieInfo> mMovieInfoList;
-    private boolean mIsPopular = true;
+    private int mSortType = Constant.SORT_TYPE_POPULAR;
+    private boolean mOnlyCollected = false;
 
     @Override
     public void onProxyCreate(@Nullable Bundle savedInstanceState) {
@@ -53,7 +58,13 @@ public class MovieListActivity extends BaseActivity implements MovieListAdapter.
         mMovieListRv.setLayoutManager(gridLayoutManager);
         mMovieListRv.setAdapter(mMovieListAdapter);
 
-        requestMovieList(mIsPopular);
+        boolean isFirstLoadPopuplarData = PrefHelper.getFirstLoadPopularData();
+        if (isFirstLoadPopuplarData) { // Loading data automatically at the first time
+            requestMovieList();
+        } else {
+            getMovieListFromDb();
+        }
+
         mActionBar = getSupportActionBar();
         if (mActionBar != null) {
             mActionBar.setTitle(R.string.movie_list_popular);
@@ -67,7 +78,7 @@ public class MovieListActivity extends BaseActivity implements MovieListAdapter.
 
     @OnClick(R.id.tv_error)
     public void onRetry() {
-        requestMovieList(mIsPopular);
+        requestMovieList();
     }
 
     @Override
@@ -82,20 +93,55 @@ public class MovieListActivity extends BaseActivity implements MovieListAdapter.
         int itemId = item.getItemId();
         switch (itemId) {
             case R.id.popular:
-                mIsPopular = true;
+                mSortType = Constant.SORT_TYPE_POPULAR;
                 mActionBar.setTitle(R.string.movie_list_popular);
                 break;
             case R.id.top_rated:
-                mIsPopular = false;
+                mSortType = Constant.SORT_TYPE_SCORE;
                 mActionBar.setTitle(R.string.movie_list_top_rated);
                 break;
         }
-        requestMovieList(mIsPopular);
+
+        if (getFirstLoad()) {
+            requestMovieList();
+        } else {
+            getMovieListFromDb();
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
-    private void requestMovieList(boolean isPopuplar) {
-        AppApi.getMovieList(isPopuplar).observeOn(AndroidSchedulers.mainThread())
+    private void requestMovieList() {
+        String stuffix;
+        if (mSortType == Constant.SORT_TYPE_POPULAR) {
+            stuffix = "/popular";
+        } else if (mSortType == Constant.SORT_TYPE_SCORE) {
+            stuffix = "/top_rated";
+        } else {
+            throw new UnsupportedOperationException("Unknow sort type: " + mSortType);
+        }
+
+        AppApi.getMovieList(stuffix)
+                .doOnNext(new Action1<MovieListBean>() {
+                    @Override
+                    public void call(MovieListBean movieListBean) {
+                        if (!getFirstLoad()) {
+                            return;
+                        }
+
+                        List<MovieInfo> movieInfoList = movieListBean.getResults();
+                        if (ComUtils.isEmpty(movieInfoList)) {
+                            return;
+                        }
+
+                        for (MovieInfo movieInfo : movieInfoList) {
+                            movieInfo.setSortType(mSortType);
+                        }
+
+                        MovieCpHelper.getInstance().saveMovieList(movieInfoList);
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<MovieListBean>() {
                     @Override
                     public void onStart() {
@@ -118,6 +164,53 @@ public class MovieListActivity extends BaseActivity implements MovieListAdapter.
                     @Override
                     public void onNext(MovieListBean bean) {
                         mMovieInfoList = bean.getResults();
+                        showMovieList(mMovieInfoList);
+                        saveFirstLoadSp();
+                    }
+                });
+    }
+
+    private void saveFirstLoadSp() {
+        if (mSortType == Constant.SORT_TYPE_POPULAR) {
+            PrefHelper.saveFirstLoadPopularData(false);
+        } else if (mSortType == Constant.SORT_TYPE_SCORE) {
+            PrefHelper.saveFirstLoadScoreData(false);
+        }
+    }
+
+    private boolean getFirstLoad() {
+        if (mSortType == Constant.SORT_TYPE_POPULAR) {
+            return PrefHelper.getFirstLoadPopularData();
+        } else if (mSortType == Constant.SORT_TYPE_SCORE) {
+            return PrefHelper.getFirstLoadScoreData();
+        } else {
+            throw new UnsupportedOperationException("Unknow sort type: " + mSortType);
+        }
+    }
+
+    private void getMovieListFromDb() {
+        MovieCpHelper.getInstance().getMovieList(mSortType, mOnlyCollected)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<MovieInfo>>() {
+
+                    @Override
+                    public void onStart() {
+                        mLoadingPb.setVisibility(View.VISIBLE);
+                        mErrorTv.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                        mLoadingPb.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                    }
+
+                    @Override
+                    public void onNext(List<MovieInfo> movieInfoList) {
+                        mMovieInfoList = movieInfoList;
                         showMovieList(mMovieInfoList);
                     }
                 });
