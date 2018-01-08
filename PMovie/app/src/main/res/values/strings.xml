@@ -6,7 +6,9 @@
     <string name="rated">评分：%s</string>
     <string name="release_date">上映时间：%s</string>
     <string name="overview">电影简介：%s</string>
-    <string name="movie_list_popular">电影列表（按最受欢迎排序）</string>
-    <string name="movie_list_top_rated">电影列表（按最佳评分排序）</string>
+    <string name="movie_list">电影列表</string>
+    <string name="movie_list_popular">（按最受欢迎排序）</string>
+    <string name="movie_list_top_rated">（按最佳评分排序）</string>
     <string name="movie_detail">电影详情</string>
+    <string name="none_data">暂无数据</string>
 </resources>

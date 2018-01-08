@@ -41,6 +41,8 @@ public class MovieListActivity extends BaseActivity implements MovieListAdapter.
     ProgressBar mLoadingPb;
     @BindView(R.id.tv_error)
     TextView mErrorTv;
+    @BindView(R.id.tv_none_data)
+    TextView mNoneDataTv;
 
     private ActionBar mActionBar;
 
@@ -48,6 +50,7 @@ public class MovieListActivity extends BaseActivity implements MovieListAdapter.
     private List<MovieInfo> mMovieInfoList;
     private int mSortType = Constant.SORT_TYPE_POPULAR;
     private boolean mOnlyCollected = false;
+    private boolean mClickRefresh = false;
 
     @Override
     public void onProxyCreate(@Nullable Bundle savedInstanceState) {
@@ -67,7 +70,8 @@ public class MovieListActivity extends BaseActivity implements MovieListAdapter.
 
         mActionBar = getSupportActionBar();
         if (mActionBar != null) {
-            mActionBar.setTitle(R.string.movie_list_popular);
+            mActionBar.setTitle(R.string.movie_list);
+            mActionBar.setSubtitle(R.string.movie_list_popular);
         }
     }
 
@@ -92,23 +96,36 @@ public class MovieListActivity extends BaseActivity implements MovieListAdapter.
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
         switch (itemId) {
+            case R.id.refresh: // TODO: 刷新应该如何处理数据？ 删除旧数据 or 更新？
+                mClickRefresh = true;
+                requestMovieList();
+                break;
+            case R.id.collect:
+                mOnlyCollected = !mOnlyCollected;
+                item.setIcon(mOnlyCollected ? R.drawable.ic_favorite : R.drawable.ic_unfavorite);
+                getMovieListFromDb();
+                break;
             case R.id.popular:
                 mSortType = Constant.SORT_TYPE_POPULAR;
-                mActionBar.setTitle(R.string.movie_list_popular);
+                mActionBar.setSubtitle(R.string.movie_list_popular);
+                getMovieData();
                 break;
             case R.id.top_rated:
                 mSortType = Constant.SORT_TYPE_SCORE;
-                mActionBar.setTitle(R.string.movie_list_top_rated);
+                mActionBar.setSubtitle(R.string.movie_list_top_rated);
+                getMovieData();
                 break;
         }
 
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void getMovieData() {
         if (getFirstLoad()) {
             requestMovieList();
         } else {
             getMovieListFromDb();
         }
-
-        return super.onOptionsItemSelected(item);
     }
 
     private void requestMovieList() {
@@ -147,6 +164,7 @@ public class MovieListActivity extends BaseActivity implements MovieListAdapter.
                     public void onStart() {
                         mLoadingPb.setVisibility(View.VISIBLE);
                         mErrorTv.setVisibility(View.GONE);
+                        mNoneDataTv.setVisibility(View.GONE);
                     }
 
                     @Override
@@ -166,6 +184,10 @@ public class MovieListActivity extends BaseActivity implements MovieListAdapter.
                         mMovieInfoList = bean.getResults();
                         showMovieList(mMovieInfoList);
                         saveFirstLoadSp();
+
+                        if (ComUtils.isEmpty(mMovieInfoList)) {
+                            mNoneDataTv.setVisibility(View.VISIBLE);
+                        }
                     }
                 });
     }
@@ -197,6 +219,7 @@ public class MovieListActivity extends BaseActivity implements MovieListAdapter.
                     public void onStart() {
                         mLoadingPb.setVisibility(View.VISIBLE);
                         mErrorTv.setVisibility(View.GONE);
+                        mNoneDataTv.setVisibility(View.GONE);
                     }
 
                     @Override
@@ -212,6 +235,10 @@ public class MovieListActivity extends BaseActivity implements MovieListAdapter.
                     public void onNext(List<MovieInfo> movieInfoList) {
                         mMovieInfoList = movieInfoList;
                         showMovieList(mMovieInfoList);
+
+                        if (ComUtils.isEmpty(movieInfoList)) {
+                            mNoneDataTv.setVisibility(View.VISIBLE);
+                        }
                     }
                 });
     }

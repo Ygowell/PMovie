@@ -77,7 +77,7 @@ public class MovieCpHelper {
                     @Override
                     public Observable<List<MovieInfo>> call(Cursor cursor) {
                         if (cursor == null || cursor.getCount() == 0) {
-                            return null;
+                            return Observable.just(null);
                         }
                         cursor.moveToFirst();
                         List<MovieInfo> movieInfoList = new ArrayList<>();
