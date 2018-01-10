@@ -10,22 +10,23 @@
 
         <TextView
             android:id="@+id/tv_detail_movie_name"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/movie_name_height"
-            android:background="@color/green"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_large"
+            android:layout_marginTop="@dimen/margin_medium"
+            android:layout_toRightOf="@+id/iv_detail_movie_cover"
             android:gravity="center_vertical"
-            android:paddingLeft="@dimen/margin_medium"
-            android:textColor="@color/white"
+            android:textColor="@color/black_3"
             android:textSize="@dimen/text_large_size"
+            android:textStyle="bold"
             tools:text="Chappie"/>
 
         <ImageView
             android:id="@+id/iv_detail_movie_cover"
-            android:layout_marginTop="@dimen/margin_medium"
             android:layout_width="@dimen/detail_movie_image_width"
             android:layout_height="@dimen/detail_movie_image_height"
-            android:layout_below="@+id/tv_detail_movie_name"
             android:layout_marginLeft="@dimen/margin_medium"
+            android:layout_marginTop="@dimen/margin_medium"
             app:srcCompat="@drawable/default_movie_icon"/>
 
         <TextView

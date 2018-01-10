@@ -64,14 +64,20 @@ public class MovieCpHelper {
                 .map(new Func1<Boolean, Cursor>() {
                     @Override
                     public Cursor call(Boolean aBoolean) {
-                        String selection = MovieEntity.CL_SORT_TYPE + " = ? and "
-                                + MovieEntity.CL_COLLECTED + " = ?";
-                        String[] selectionArgs = {sortType + "", onlyCollected ? "1" : "0"};
-                        return mResolver.query(MovieEntity.CONTENT_URI,
-                                null,
-                                selection,
-                                selectionArgs,
-                                null);
+                        if (!onlyCollected) {
+                            return mResolver.query(MovieEntity.CONTENT_URI,
+                                    null,
+                                    MovieEntity.CL_SORT_TYPE + " = ?",
+                                    new String[]{sortType + ""},
+                                    null);
+                        } else {
+                            return mResolver.query(MovieEntity.CONTENT_URI,
+                                    null,
+                                    MovieEntity.CL_SORT_TYPE + " = ? and "
+                                            + MovieEntity.CL_COLLECTED + " = ?",
+                                    new String[]{sortType + "", "1"},
+                                    null);
+                        }
                     }
                 }).flatMap(new Func1<Cursor, Observable<List<MovieInfo>>>() {
                     @Override
@@ -105,6 +111,27 @@ public class MovieCpHelper {
                         return Observable.just(movieInfoList);
                     }
                 }).subscribeOn(Schedulers.io());
+    }
+
+    public static Observable<Boolean> updateMovieCollectState(final long movieId, final int collect) {
+        return Observable.just("")
+                .flatMap(new Func1<String, Observable<Boolean>>() {
+                             @Override
+                             public Observable<Boolean> call(String s) {
+                                 ContentValues cv = new ContentValues();
+                                 cv.put(MovieEntity.CL_COLLECTED, collect);
+                                 String where = MovieEntity.CL_MOVIE_ID + " = ?";
+                                 String[] selectionArgs = {movieId + ""};
+
+                                 int count = mResolver.update(MovieEntity.CONTENT_URI,
+                                         cv,
+                                         where,
+                                         selectionArgs);
+
+                                 return Observable.just(count > 0);
+                             }
+                         }
+                ).subscribeOn(Schedulers.io());
     }
 
     private long getLong(Cursor cursor, String cl_name) {

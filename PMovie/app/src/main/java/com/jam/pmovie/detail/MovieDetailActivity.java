@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,9 +17,12 @@ import com.jam.pmovie.BaseActivity;
 import com.jam.pmovie.R;
 import com.jam.pmovie.bean.MovieInfo;
 import com.jam.pmovie.common.Constant;
+import com.jam.pmovie.data.MovieCpHelper;
 import com.jam.pmovie.http.UrlUtils;
 
 import butterknife.BindView;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
 
 public class MovieDetailActivity extends BaseActivity {
 
@@ -34,6 +38,7 @@ public class MovieDetailActivity extends BaseActivity {
     ImageView mMovieCoverIv;
 
     private MovieInfo mMovieInfo;
+    private boolean mIsCollect;
 
     @Override
     public void onProxyCreate(@Nullable Bundle savedInstanceState) {
@@ -50,6 +55,8 @@ public class MovieDetailActivity extends BaseActivity {
             actionBar.setTitle(R.string.movie_detail);
         }
         showMovieDetail();
+
+        mIsCollect = mMovieInfo.isCollected();
     }
 
     /**
@@ -73,8 +80,17 @@ public class MovieDetailActivity extends BaseActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.movie_detail_menu, menu);
+        menu.findItem(R.id.collect_detail).setIcon(mIsCollect
+                ? R.drawable.ic_favorite : R.drawable.ic_unfavorite);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == android.R.id.home) {
             Intent upIntent = NavUtils.getParentActivityIntent(this);
             if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
                 TaskStackBuilder.create(this)
@@ -84,6 +100,29 @@ public class MovieDetailActivity extends BaseActivity {
                 NavUtils.navigateUpFromSameTask(this);
             }
             return true;
+        } else if (itemId == R.id.collect_detail) {
+            mIsCollect = !mIsCollect;
+            MovieCpHelper.updateMovieCollectState(mMovieInfo.getId(),
+                    mIsCollect ? 1 : 0).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<Boolean>() {
+                        @Override
+                        public void onCompleted() {
+                        }
+
+                        @Override
+                        public void onError(Throwable e) { // Fail to update
+                            mIsCollect = !mIsCollect;
+                        }
+
+                        @Override
+                        public void onNext(Boolean aBoolean) {
+                            if(aBoolean) {
+                                item.setIcon(mIsCollect ? R.drawable.ic_favorite : R.drawable.ic_unfavorite);
+                            } else { // Fail to update
+                                mIsCollect = !mIsCollect;
+                            }
+                        }
+                    });
         }
         return super.onOptionsItemSelected(item);
     }
