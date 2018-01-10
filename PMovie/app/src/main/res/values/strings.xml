@@ -5,6 +5,7 @@
     <string name="top_rated">最佳评分</string>
     <string name="rated">评分：%s</string>
     <string name="release_date">上映时间：%s</string>
+    <string name="movie_runtime">时长：%s分钟</string>
     <string name="overview">电影简介：%s</string>
     <string name="movie_list">电影列表</string>
     <string name="movie_list_popular">（按最受欢迎排序）</string>

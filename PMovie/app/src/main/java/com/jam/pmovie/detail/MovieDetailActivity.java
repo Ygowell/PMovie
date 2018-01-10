@@ -6,8 +6,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,9 +17,13 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.jam.pmovie.BaseActivity;
 import com.jam.pmovie.R;
+import com.jam.pmovie.bean.CommentInfo;
+import com.jam.pmovie.bean.MovieDetailInfo;
 import com.jam.pmovie.bean.MovieInfo;
+import com.jam.pmovie.bean.NoticeInfo;
 import com.jam.pmovie.common.Constant;
 import com.jam.pmovie.data.MovieCpHelper;
+import com.jam.pmovie.http.AppApi;
 import com.jam.pmovie.http.UrlUtils;
 
 import butterknife.BindView;
@@ -26,6 +32,7 @@ import rx.android.schedulers.AndroidSchedulers;
 
 public class MovieDetailActivity extends BaseActivity {
 
+    private static final String TAG = "MovieDetailActivity";
     @BindView(R.id.tv_detail_movie_name)
     TextView mMovieNameTv;
     @BindView(R.id.tv_detail_movie_time)
@@ -36,6 +43,8 @@ public class MovieDetailActivity extends BaseActivity {
     TextView mMovieOverviewTv;
     @BindView(R.id.iv_detail_movie_cover)
     ImageView mMovieCoverIv;
+    @BindView(R.id.tv_detail_movie_runtime)
+    TextView mMovieRuntimeTv;
 
     private MovieInfo mMovieInfo;
     private boolean mIsCollect;
@@ -57,6 +66,10 @@ public class MovieDetailActivity extends BaseActivity {
         showMovieDetail();
 
         mIsCollect = mMovieInfo.isCollected();
+
+        reqMovieRuntime();
+        reqMovieComments();
+        reqMovieNotices();
     }
 
     /**
@@ -77,6 +90,70 @@ public class MovieDetailActivity extends BaseActivity {
                 .load(UrlUtils.getPicUrl(mMovieInfo.getPosterPath()))
                 .apply(requestOptions)
                 .into(mMovieCoverIv);
+    }
+
+    private void reqMovieRuntime() {
+        AppApi.getMovieDetail(mMovieInfo.getId())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<MovieDetailInfo>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mMovieRuntimeTv.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onNext(MovieDetailInfo movieDetailInfo) {
+                        Log.d(TAG, "加载电影时长成功！");
+                        int runtime = movieDetailInfo.getRuntime();
+                        mMovieRuntimeTv.setVisibility(View.VISIBLE);
+                        mMovieRuntimeTv.setText(getResources()
+                                .getString(R.string.movie_runtime, runtime + ""));
+                    }
+                });
+    }
+
+    private void reqMovieNotices() {
+        AppApi.getNoticeInfo(mMovieInfo.getId())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<NoticeInfo>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(TAG, "加载预告片列表失败:" + e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(NoticeInfo noticeInfo) {
+                        Log.d(TAG, "加载预告片列表成功！");
+                    }
+                });
+    }
+
+    private void reqMovieComments() {
+        AppApi.getCommentInfo(mMovieInfo.getId())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<CommentInfo>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(TAG, "加载评论列表失败:" + e.getMessage());
+                    }
+
+                    @Override
+                    public void onNext(CommentInfo commentInfo) {
+                        Log.d(TAG, "加载评论列表成功！");
+                    }
+                });
     }
 
     @Override
@@ -116,7 +193,7 @@ public class MovieDetailActivity extends BaseActivity {
 
                         @Override
                         public void onNext(Boolean aBoolean) {
-                            if(aBoolean) {
+                            if (aBoolean) {
                                 item.setIcon(mIsCollect ? R.drawable.ic_favorite : R.drawable.ic_unfavorite);
                             } else { // Fail to update
                                 mIsCollect = !mIsCollect;

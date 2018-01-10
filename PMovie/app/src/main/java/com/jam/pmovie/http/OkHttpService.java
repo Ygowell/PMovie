@@ -1,16 +1,16 @@
 package com.jam.pmovie.http;
 
+import android.util.Log;
+
 import com.google.gson.Gson;
 import com.jam.pmovie.BuildConfig;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import okhttp3.FormBody;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 import rx.Observable;
 import rx.Subscriber;
@@ -33,17 +33,21 @@ public class OkHttpService<T> {
         mClient = new OkHttpClient();
     }
 
-    private String run(String url, RequestBody body) throws IOException {
+    private String run(String url) throws Exception {
         Request request = new Request.Builder()
                 .url(url)
-                .post(body)
                 .build();
 
         Response response = mClient.newCall(request).execute();
         if (response != null & response.isSuccessful()) {
             return response.body().string();
+        } else {
+            String errorMsg = "请求失败";
+            if (response != null) {
+                errorMsg = response.message();
+            }
+            throw new Exception(errorMsg);
         }
-        return null;
     }
 
     public Observable<T> execute(final String url) {
@@ -51,26 +55,31 @@ public class OkHttpService<T> {
     }
 
     public Observable<T> execute(final String url, HashMap<String, String> params) {
-        FormBody.Builder builder = new FormBody.Builder()
-                .add(PARAM_API_KEY, BuildConfig.OPEN_MOVIE_API_KEY);
+        HttpUrl.Builder httpUrlBuilder = HttpUrl.parse(url).newBuilder()
+                .addQueryParameter(PARAM_API_KEY, BuildConfig.OPEN_MOVIE_API_KEY);
 
         if (params != null) {
             for (Map.Entry<String, String> entry : params.entrySet()) {
-                builder.add(entry.getKey(), entry.getValue());
+                httpUrlBuilder.addQueryParameter(entry.getKey(), entry.getValue());
             }
         }
 
-        final RequestBody body = builder.build();
+        final String reqUrl = httpUrlBuilder.build().toString();
+        Log.d("OkHttpService", "reqUrl = " + reqUrl);
 
         return Observable.unsafeCreate(new Observable.OnSubscribe<T>() {
             @Override
             public void call(Subscriber<? super T> subscriber) {
                 try {
-                    String result = run(url, body);
+                    String result = run(reqUrl);
                     Gson gson = new Gson();
                     T t = gson.fromJson(result, mClass);
-                    subscriber.onNext(t);
-                    subscriber.onCompleted();
+                    if (t == null) {
+                        subscriber.onError(new Exception("服务器数据错误"));
+                    } else {
+                        subscriber.onNext(t);
+                        subscriber.onCompleted();
+                    }
                 } catch (Exception e) {
                     subscriber.onError(e);
                 }

@@ -37,7 +37,7 @@
             android:layout_marginLeft="@dimen/margin_large"
             android:layout_marginTop="@dimen/margin_large"
             android:layout_toRightOf="@+id/iv_detail_movie_cover"
-            tools:text="上映日期："/>
+            tools:text="上映日期：2015-08-15"/>
 
         <TextView
             android:id="@+id/tv_detail_movie_rate"
@@ -47,7 +47,17 @@
             android:layout_marginLeft="@dimen/margin_large"
             android:layout_marginTop="@dimen/margin_large"
             android:layout_toRightOf="@+id/iv_detail_movie_cover"
-            tools:text="评分："/>
+            tools:text="评分：6.9"/>
+
+        <TextView
+            android:id="@+id/tv_detail_movie_runtime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/margin_large"
+            android:layout_marginTop="@dimen/margin_large"
+            android:layout_alignBottom="@+id/tv_detail_movie_rate"
+            android:layout_alignParentRight="true"
+            tools:text="时长：120分钟"/>
 
         <TextView
             android:id="@+id/tv_detail_movie_overview"
