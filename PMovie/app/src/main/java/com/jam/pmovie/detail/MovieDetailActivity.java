@@ -1,16 +1,20 @@
 package com.jam.pmovie.detail;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewStub;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -21,10 +25,13 @@ import com.jam.pmovie.bean.CommentInfo;
 import com.jam.pmovie.bean.MovieDetailInfo;
 import com.jam.pmovie.bean.MovieInfo;
 import com.jam.pmovie.bean.NoticeInfo;
+import com.jam.pmovie.common.ComUtils;
 import com.jam.pmovie.common.Constant;
 import com.jam.pmovie.data.MovieCpHelper;
 import com.jam.pmovie.http.AppApi;
 import com.jam.pmovie.http.UrlUtils;
+
+import java.util.List;
 
 import butterknife.BindView;
 import rx.Subscriber;
@@ -132,8 +139,32 @@ public class MovieDetailActivity extends BaseActivity {
                     @Override
                     public void onNext(NoticeInfo noticeInfo) {
                         Log.d(TAG, "加载预告片列表成功！");
+                        if (ComUtils.isEmpty(noticeInfo.getResults())) {
+                            return;
+                        }
+
+                        createNoticeView(noticeInfo.getResults());
                     }
                 });
+    }
+
+    private void createNoticeView(List<NoticeInfo.ResultsEntity> noticeInfoList) {
+        View rootView = ((ViewStub) findViewById(R.id.vs_notice)).inflate();
+        LinearLayout noticeLayout = (LinearLayout) rootView.findViewById(R.id.ll_movie_notice);
+
+        for (NoticeInfo.ResultsEntity noticeInfo : noticeInfoList) {
+            View itemView = LayoutInflater.from(this).inflate(R.layout.item_notice,
+                    noticeLayout, false);
+            noticeLayout.addView(itemView);
+            final String youtubeKey = noticeInfo.getKey();
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("http://www.youtube.com/watch?v=" + youtubeKey)));
+                }
+            });
+        }
     }
 
     private void reqMovieComments() {
