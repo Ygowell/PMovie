@@ -14,4 +14,9 @@
         <item name="android:background">@color/color_e5</item>
     </style>
 
+    <style name="divider_blank">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">10dp</item>
+        <item name="android:background">@color/color_f3f7f9</item>
+    </style>
 </resources>

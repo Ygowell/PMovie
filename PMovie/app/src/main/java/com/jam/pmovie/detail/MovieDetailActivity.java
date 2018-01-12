@@ -84,12 +84,9 @@ public class MovieDetailActivity extends BaseActivity {
      */
     private void showMovieDetail() {
         mMovieNameTv.setText(mMovieInfo.getTitle());
-        mMovieRateTv.setText(getResources().getString(R.string.rated,
-                String.valueOf(mMovieInfo.getVoteAverage())));
-        mMovieReleaseDateTv.setText(getResources().getString(R.string.release_date,
-                mMovieInfo.getReleaseDate()));
-        mMovieOverviewTv.setText(getResources().getString(R.string.overview,
-                mMovieInfo.getOverview()));
+        mMovieRateTv.setText(getString(R.string.rated, String.valueOf(mMovieInfo.getVoteAverage())));
+        mMovieReleaseDateTv.setText(getString(R.string.release_date, mMovieInfo.getReleaseDate()));
+        mMovieOverviewTv.setText(mMovieInfo.getOverview());
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.centerCrop().placeholder(R.drawable.default_movie_icon)
                 .error(R.drawable.default_movie_icon);
@@ -149,8 +146,8 @@ public class MovieDetailActivity extends BaseActivity {
     }
 
     private void createNoticeView(List<NoticeInfo.ResultsEntity> noticeInfoList) {
-        View rootView = ((ViewStub) findViewById(R.id.vs_notice)).inflate();
-        LinearLayout noticeLayout = (LinearLayout) rootView.findViewById(R.id.ll_movie_notice);
+        ((ViewStub) findViewById(R.id.vs_notice)).inflate();
+        LinearLayout noticeLayout = (LinearLayout) findViewById(R.id.ll_movie_notice);
 
         for (NoticeInfo.ResultsEntity noticeInfo : noticeInfoList) {
             View itemView = LayoutInflater.from(this).inflate(R.layout.item_notice,
@@ -183,8 +180,28 @@ public class MovieDetailActivity extends BaseActivity {
                     @Override
                     public void onNext(CommentInfo commentInfo) {
                         Log.d(TAG, "加载评论列表成功！");
+                        if (ComUtils.isEmpty(commentInfo.getResults())) {
+                            return;
+                        }
+
+                        createCommentView(commentInfo.getResults());
                     }
                 });
+    }
+
+    private void createCommentView(List<CommentInfo.Comment> commentList) {
+        ((ViewStub) findViewById(R.id.vs_comment)).inflate();
+        LinearLayout commentLayout = (LinearLayout) findViewById(R.id.ll_movie_comment);
+        for (CommentInfo.Comment comment : commentList) {
+            View itemView = LayoutInflater.from(this).inflate(R.layout.item_comment,
+                    commentLayout, false);
+            TextView contentTv = (TextView) itemView.findViewById(R.id.tv_comment_content);
+            TextView authorTv = (TextView) itemView.findViewById(R.id.tv_comment_author);
+
+            contentTv.setText(comment.getContent());
+            authorTv.setText(getString(R.string.author, comment.getAuthor()));
+            commentLayout.addView(itemView);
+        }
     }
 
     @Override

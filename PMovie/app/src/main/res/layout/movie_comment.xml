@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content"
+              android:layout_height="match_parent"
+              android:background="@color/white"
               android:orientation="vertical">
 
     <View style="@style/divider_blank" />
@@ -12,18 +13,13 @@
         android:textSize="@dimen/tag_item_title"
         android:layout_margin="10dp"
         android:textColor="@color/black"
-        android:text="@string/notice"/>
+        android:text="@string/comment"/>
 
     <View style="@style/divider_line" />
 
-    <HorizontalScrollView
+    <LinearLayout
+        android:id="@+id/ll_movie_comment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white">
-        <LinearLayout
-            android:id="@+id/ll_movie_notice"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"/>
-    </HorizontalScrollView>
+        android:layout_height="match_parent"
+        android:orientation="vertical"/>
 </LinearLayout>

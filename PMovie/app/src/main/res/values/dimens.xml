@@ -8,4 +8,7 @@
     <dimen name="margin_large">20dp</dimen>
     <dimen name="detail_movie_image_width">100dp</dimen>
     <dimen name="detail_movie_image_height">150dp</dimen>
+
+    <dimen name="tag_item_title">17sp</dimen>
+    <dimen name="movie_content">16sp</dimen>
 </resources>
