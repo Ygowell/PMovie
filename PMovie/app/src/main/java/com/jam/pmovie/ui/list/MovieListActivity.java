@@ -1,4 +1,4 @@
-package com.jam.pmovie.list;
+package com.jam.pmovie.ui.list;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,8 +21,8 @@ import com.jam.pmovie.common.ComUtils;
 import com.jam.pmovie.common.Constant;
 import com.jam.pmovie.data.MovieCpHelper;
 import com.jam.pmovie.data.PrefHelper;
-import com.jam.pmovie.detail.MovieDetailActivity;
 import com.jam.pmovie.http.AppApi;
+import com.jam.pmovie.ui.detail.MovieDetailActivity;
 
 import java.util.List;
 
@@ -96,7 +96,7 @@ public class MovieListActivity extends BaseActivity implements MovieListAdapter.
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
         switch (itemId) {
-            case R.id.refresh: // TODO: 刷新应该如何处理数据？ 删除旧数据 or 更新？
+            case R.id.refresh:
                 mClickRefresh = true;
                 requestMovieList();
                 break;
@@ -142,20 +142,18 @@ public class MovieListActivity extends BaseActivity implements MovieListAdapter.
                 .doOnNext(new Action1<MovieListBean>() {
                     @Override
                     public void call(MovieListBean movieListBean) {
-                        if (!getFirstLoad()) {
-                            return;
-                        }
+                        if (mClickRefresh || getFirstLoad()) { // 更新数据
+                            List<MovieInfo> movieInfoList = movieListBean.getResults();
+                            if (ComUtils.isEmpty(movieInfoList)) {
+                                return;
+                            }
 
-                        List<MovieInfo> movieInfoList = movieListBean.getResults();
-                        if (ComUtils.isEmpty(movieInfoList)) {
-                            return;
-                        }
+                            for (MovieInfo movieInfo : movieInfoList) {
+                                movieInfo.setSortType(mSortType);
+                            }
 
-                        for (MovieInfo movieInfo : movieInfoList) {
-                            movieInfo.setSortType(mSortType);
+                            MovieCpHelper.getInstance().saveMovieList(movieInfoList);
                         }
-
-                        MovieCpHelper.getInstance().saveMovieList(movieInfoList);
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())

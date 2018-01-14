@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">PMovie</string>
+    <string name="error_server">The network or server is busy, please try again!</string>
+    <string name="popular">Most popular</string>
+    <string name="top_rated">Top rated</string>
+    <string name="rated">Rated：%s</string>
+    <string name="release_date">Release time：%s</string>
+    <string name="movie_runtime">Runtime：%s(min)</string>
+    <string name="overview">Overview</string>
+    <string name="movie_list">Movie List</string>
+    <string name="movie_list_popular">（Order by popularity）</string>
+    <string name="movie_list_top_rated">（Order by top rated）</string>
+    <string name="movie_detail">Movie Detail</string>
+    <string name="none_data">No data</string>
+    <string name="author">Author：%s</string>
+    <string name="notice">Notice</string>
+    <string name="comment">Comment</string>
+</resources>

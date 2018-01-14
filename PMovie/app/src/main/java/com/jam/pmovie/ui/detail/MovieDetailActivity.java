@@ -1,4 +1,4 @@
-package com.jam.pmovie.detail;
+package com.jam.pmovie.ui.detail;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -157,8 +157,11 @@ public class MovieDetailActivity extends BaseActivity {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    startActivity(new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("http://www.youtube.com/watch?v=" + youtubeKey)));
+                    try {
+                        startActivity(new Intent(Intent.ACTION_VIEW,
+                                Uri.parse("http://www.youtube.com/watch?v=" + youtubeKey)));
+                    } catch (Exception e) {
+                    }
                 }
             });
         }

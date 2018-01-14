@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">PMovie</string>
+    <string name="app_name">热播电影</string>
     <string name="error_server">网络或服务器忙，请点击重试！</string>
     <string name="popular">最受欢迎</string>
     <string name="top_rated">最佳评分</string>

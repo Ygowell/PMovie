@@ -1,4 +1,4 @@
-package com.jam.pmovie.list;
+package com.jam.pmovie.ui.list;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

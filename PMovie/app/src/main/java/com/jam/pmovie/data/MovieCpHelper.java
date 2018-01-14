@@ -43,7 +43,6 @@ public class MovieCpHelper {
             values.put(MovieEntity.CL_ADULT, movieInfo.isAdult() ? 1 : 0);
             values.put(MovieEntity.CL_BACKDROP_PATH, movieInfo.getBackdropPath());
             values.put(MovieEntity.CL_COLLECTED, movieInfo.isCollected() ? 1 : 0);
-            values.put(MovieEntity.CL_HAS_LOAD, movieInfo.isLoaded() ? 1 : 0);
             values.put(MovieEntity.CL_ORG_LANGUAGE, movieInfo.getOrgLanguage());
             values.put(MovieEntity.CL_ORG_TITLE, movieInfo.getOrgTitle());
             values.put(MovieEntity.CL_OVERVIEW, movieInfo.getOverview());
@@ -89,11 +88,10 @@ public class MovieCpHelper {
                         List<MovieInfo> movieInfoList = new ArrayList<>();
                         do {
                             MovieInfo movieInfo = new MovieInfo();
-                            movieInfo.setId(getLong(cursor, MovieEntity.CL_MOVIE_ID));
+                            movieInfo.setId(getInt(cursor, MovieEntity.CL_MOVIE_ID));
                             movieInfo.setAdult(getBool(cursor, MovieEntity.CL_ADULT));
                             movieInfo.setBackdropPath(getString(cursor, MovieEntity.CL_BACKDROP_PATH));
                             movieInfo.setCollected(getBool(cursor, MovieEntity.CL_COLLECTED));
-                            movieInfo.setLoaded(getBool(cursor, MovieEntity.CL_HAS_LOAD));
                             movieInfo.setVideo(getBool(cursor, MovieEntity.CL_VIDEO));
                             movieInfo.setOrgLanguage(getString(cursor, MovieEntity.CL_ORG_LANGUAGE));
                             movieInfo.setOrgTitle(getString(cursor, MovieEntity.CL_ORG_TITLE));

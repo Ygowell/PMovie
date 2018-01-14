@@ -11,9 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.jam.pmovie.data.MovieContract.CommentEntity;
 import com.jam.pmovie.data.MovieContract.MovieEntity;
-import com.jam.pmovie.data.MovieContract.NoticeEntity;
 
 /**
  * Created by jam on 17/9/8.
@@ -22,11 +20,6 @@ import com.jam.pmovie.data.MovieContract.NoticeEntity;
 public class MovieContentProvider extends ContentProvider {
 
     private final static int MOVIES = 100;
-    private final static int MOVIES_WITH_ID = 101;
-    private final static int NOTICES = 102;
-    private final static int NOTICES_WITH_MOVIE_ID = 103;
-    private final static int COMMENTS = 104;
-    private final static int COMMENTS_WITH_MOVIE_ID = 105;
     private final static String TAG = "MovieContentProvider";
 
     private MovieDbHelper mMovieDbHelper;
@@ -35,9 +28,6 @@ public class MovieContentProvider extends ContentProvider {
     public static UriMatcher buidUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         matcher.addURI(MovieContract.AUTHORITY, MovieContract.PATH_MOVIES, MOVIES);
-        matcher.addURI(MovieContract.AUTHORITY, MovieContract.PATH_MOVIES + "/#", MOVIES_WITH_ID);
-        matcher.addURI(MovieContract.AUTHORITY, MovieContract.PATH_NOTICES, NOTICES);
-        matcher.addURI(MovieContract.AUTHORITY, MovieContract.PATH_COMMENTS, COMMENTS);
         return matcher;
     }
 
@@ -59,24 +49,6 @@ public class MovieContentProvider extends ContentProvider {
         switch (match) {
             case MOVIES:
                 retCursor = db.query(MovieEntity.TB_NAME,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
-                break;
-            case NOTICES_WITH_MOVIE_ID:
-                retCursor = db.query(NoticeEntity.TB_NAME,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
-                break;
-            case COMMENTS_WITH_MOVIE_ID:
-                retCursor = db.query(CommentEntity.TB_NAME,
                         projection,
                         selection,
                         selectionArgs,
@@ -108,12 +80,6 @@ public class MovieContentProvider extends ContentProvider {
         switch (match) {
             case MOVIES:
                 tableName = MovieEntity.TB_NAME;
-                break;
-            case COMMENTS:
-                tableName = CommentEntity.TB_NAME;
-                break;
-            case NOTICES:
-                tableName = NoticeEntity.TB_NAME;
                 break;
             default:
                 throw new UnsupportedOperationException("Unkonw uri: " + uri.toString());

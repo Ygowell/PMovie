@@ -29,7 +29,7 @@ public class MovieInfo implements Parcelable {
 
     @SerializedName("vote_count")
     private int voteCount;
-    private long id;
+    private int id;
     private boolean video;
     @SerializedName("vote_average")
     private String voteAverage;
@@ -57,7 +57,7 @@ public class MovieInfo implements Parcelable {
 
     protected MovieInfo(Parcel in) {
         voteCount = in.readInt();
-        id = in.readLong();
+        id = in.readInt();
         video = in.readByte() != 0;
         voteAverage = in.readString();
         title = in.readString();
@@ -77,7 +77,7 @@ public class MovieInfo implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(voteCount);
-        dest.writeLong(id);
+        dest.writeInt(id);
         dest.writeByte((byte) (video ? 1 : 0));
         dest.writeString(voteAverage);
         dest.writeString(title);
@@ -119,11 +119,11 @@ public class MovieInfo implements Parcelable {
         this.voteCount = voteCount;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
