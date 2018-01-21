@@ -15,4 +15,5 @@
     <string name="author">作者：%s</string>
     <string name="notice">预告片</string>
     <string name="comment">评论</string>
+    <string name="not_found_browser">请安装浏览器来支持预告片的播放</string>
 </resources>

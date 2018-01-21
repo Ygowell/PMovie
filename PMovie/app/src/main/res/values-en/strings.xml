@@ -15,4 +15,5 @@
     <string name="author">Author：%s</string>
     <string name="notice">Notice</string>
     <string name="comment">Comment</string>
+    <string name="not_found_browser">Please install the browser to play the notices of movie</string>
 </resources>

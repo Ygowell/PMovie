@@ -20,8 +20,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         onProxyCreate(savedInstanceState);
     }
 
-    public void onProxyCreate(@Nullable Bundle savedInstanceState) {
-
+    protected void onProxyCreate(@Nullable Bundle savedInstanceState) {
     }
 
     protected abstract int getLayoutId();
