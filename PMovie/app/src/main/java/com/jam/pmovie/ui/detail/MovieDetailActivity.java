@@ -26,6 +26,7 @@ public class MovieDetailActivity extends BaseActivity {
     private MovieInfo mMovieInfo;
     private boolean mIsCollect;
     private MovieDetailFragment mDetailFragment;
+    private boolean mIsOrgCollect;
 
     @Override
     protected int getLayoutId() {
@@ -48,6 +49,7 @@ public class MovieDetailActivity extends BaseActivity {
         }
 
         mIsCollect = mMovieInfo.isCollected();
+        mIsOrgCollect = mIsCollect;
 
         mDetailFragment = new MovieDetailFragment();
         Bundle bundle = new Bundle();
@@ -78,6 +80,7 @@ public class MovieDetailActivity extends BaseActivity {
                         .addNextIntentWithParentStack(upIntent)
                         .startActivities();
             } else {
+                setReturnResult();
                 NavUtils.navigateUpFromSameTask(this);
             }
             return true;
@@ -106,5 +109,17 @@ public class MovieDetailActivity extends BaseActivity {
                     });
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        setReturnResult();
+    }
+
+    private void setReturnResult() {
+        if (mIsOrgCollect != mIsCollect) {
+            setResult(RESULT_OK);
+        }
     }
 }

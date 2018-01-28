@@ -4,8 +4,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,6 +56,8 @@ public class MovieDetailFragment extends BaseFragment {
     @BindView(R.id.vs_comment)
     ViewStub mCommentVs;
 
+    private LinearLayout mNoticeLayout;
+    private LinearLayout mCommentLayout;
     private Context mContext;
     private MovieInfo mMovieInfo;
 
@@ -70,27 +70,23 @@ public class MovieDetailFragment extends BaseFragment {
     protected void onProxyCreateView() {
         mContext = getContext();
 
+        if (getArguments() == null) {
+            return;
+        }
+
         mMovieInfo = getArguments().getParcelable(Constant.ExtraName.MOVIE_DATA);
         if (mMovieInfo == null) {
             return;
         }
 
-        showMovieDetail();
-
-        reqMovieRuntime();
-        reqMovieComments();
-        reqMovieNotices();
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+        showMovieDetail(mMovieInfo);
     }
 
     /**
      * 展示电影详情
      */
-    private void showMovieDetail() {
+    public void showMovieDetail(MovieInfo movieInfo) {
+        mMovieInfo = movieInfo;
         mMovieNameTv.setText(mMovieInfo.getTitle());
         mMovieRateTv.setText(getString(R.string.rated, String.valueOf(mMovieInfo.getVoteAverage())));
         mMovieReleaseDateTv.setText(getString(R.string.release_date, mMovieInfo.getReleaseDate()));
@@ -102,12 +98,23 @@ public class MovieDetailFragment extends BaseFragment {
                 .load(UrlUtils.getPicUrl(mMovieInfo.getPosterPath()))
                 .apply(requestOptions)
                 .into(mMovieCoverIv);
+
+        reqMovieRuntime();
+        reqMovieComments();
+        reqMovieNotices();
     }
 
     private void reqMovieRuntime() {
         AppApi.getMovieDetail(mMovieInfo.getId())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<MovieDetailInfo>() {
+
+                    @Override
+                    public void onStart() {
+                        super.onStart();
+                        mMovieRuntimeTv.setVisibility(View.GONE);
+                    }
+
                     @Override
                     public void onCompleted() {
                     }
@@ -133,6 +140,14 @@ public class MovieDetailFragment extends BaseFragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<NoticeInfo>() {
                     @Override
+                    public void onStart() {
+                        super.onStart();
+                        if (mNoticeLayout != null) {
+                            mNoticeLayout.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
                     public void onCompleted() {
                     }
 
@@ -154,13 +169,18 @@ public class MovieDetailFragment extends BaseFragment {
     }
 
     private void createNoticeView(List<NoticeInfo.ResultsEntity> noticeInfoList) {
-        View noticeView = mNoticeVs.inflate();
-        LinearLayout noticeLayout = (LinearLayout) noticeView.findViewById(R.id.ll_movie_notice);
+        if (mNoticeLayout == null) {
+            View noticeView = mNoticeVs.inflate();
+            mNoticeLayout = (LinearLayout) noticeView.findViewById(R.id.ll_movie_notice);
+        } else {
+            mNoticeLayout.removeAllViews();
+        }
+        mNoticeLayout.setVisibility(View.VISIBLE);
 
         for (NoticeInfo.ResultsEntity noticeInfo : noticeInfoList) {
             View itemView = LayoutInflater.from(mContext).inflate(R.layout.item_notice,
-                    noticeLayout, false);
-            noticeLayout.addView(itemView);
+                    mNoticeLayout, false);
+            mNoticeLayout.addView(itemView);
             final String youtubeKey = noticeInfo.getKey();
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -180,6 +200,15 @@ public class MovieDetailFragment extends BaseFragment {
         AppApi.getCommentInfo(mMovieInfo.getId())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<CommentInfo>() {
+
+                    @Override
+                    public void onStart() {
+                        super.onStart();
+                        if (mCommentLayout != null) {
+                            mCommentLayout.setVisibility(View.GONE);
+                        }
+                    }
+
                     @Override
                     public void onCompleted() {
                     }
@@ -202,17 +231,22 @@ public class MovieDetailFragment extends BaseFragment {
     }
 
     private void createCommentView(List<CommentInfo.Comment> commentList) {
-        View commentView = mCommentVs.inflate();
-        LinearLayout commentLayout = (LinearLayout) commentView.findViewById(R.id.ll_movie_comment);
+        if (mCommentLayout == null) {
+            View commentView = mCommentVs.inflate();
+            mCommentLayout = (LinearLayout) commentView.findViewById(R.id.ll_movie_comment);
+        } else {
+            mCommentLayout.removeAllViews();
+        }
+        mCommentLayout.setVisibility(View.VISIBLE);
         for (CommentInfo.Comment comment : commentList) {
             View itemView = LayoutInflater.from(mContext).inflate(R.layout.item_comment,
-                    commentLayout, false);
+                    mCommentLayout, false);
             TextView contentTv = (TextView) itemView.findViewById(R.id.tv_comment_content);
             TextView authorTv = (TextView) itemView.findViewById(R.id.tv_comment_author);
 
             contentTv.setText(comment.getContent());
             authorTv.setText(getString(R.string.author, comment.getAuthor()));
-            commentLayout.addView(itemView);
+            mCommentLayout.addView(itemView);
         }
     }
 }

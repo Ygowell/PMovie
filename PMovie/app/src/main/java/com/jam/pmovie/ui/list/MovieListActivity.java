@@ -1,8 +1,8 @@
 package com.jam.pmovie.ui.list;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.view.Menu;
@@ -13,6 +13,7 @@ import com.jam.pmovie.BaseActivity;
 import com.jam.pmovie.R;
 import com.jam.pmovie.bean.MovieInfo;
 import com.jam.pmovie.common.Constant;
+import com.jam.pmovie.ui.detail.MovieDetailActivity;
 import com.jam.pmovie.ui.detail.MovieDetailFragment;
 
 public class MovieListActivity extends BaseActivity implements MovieListFragment.OnMovieClickListener {
@@ -21,7 +22,8 @@ public class MovieListActivity extends BaseActivity implements MovieListFragment
     private MovieListFragment mListFragment;
     private MovieDetailFragment mDetailFragment;
     private boolean mOnlyCollected = false;
-    private Fragment mCurrentFg;
+    private boolean mIsTwoPanel = false;
+    private final static int REQ_MOVIE_DETAIL = 100;
 
     @Override
     protected int getLayoutId() {
@@ -38,29 +40,18 @@ public class MovieListActivity extends BaseActivity implements MovieListFragment
             mActionBar.setSubtitle(R.string.movie_list_popular);
         }
 
-        mListFragment = new MovieListFragment();
+        if (findViewById(R.id.movie_detail_container) != null) {
+            mIsTwoPanel = true;
+        } else {
+            mIsTwoPanel = false;
+        }
         showMovieListFragment();
     }
 
     private void showMovieListFragment() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        if (!mListFragment.isAdded()) {
-            transaction.add(R.id.main_container, mListFragment).commitAllowingStateLoss();
-        } else {
-            transaction.remove(mDetailFragment).show(mListFragment).commitAllowingStateLoss();
-        }
-        mCurrentFg = mListFragment;
-    }
-
-    private void showMovieDetailFragment(MovieInfo movieInfo) {
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        mDetailFragment = new MovieDetailFragment();
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(Constant.ExtraName.MOVIE_DATA, movieInfo);
-        mDetailFragment.setArguments(bundle);
-        transaction.hide(mListFragment).add(R.id.main_container, mDetailFragment)
-                .commitAllowingStateLoss();
-        mCurrentFg = mDetailFragment;
+        mListFragment = new MovieListFragment();
+        transaction.add(R.id.main_container, mListFragment).commitAllowingStateLoss();
     }
 
     @Override
@@ -97,22 +88,42 @@ public class MovieListActivity extends BaseActivity implements MovieListFragment
 
     @Override
     public void onMovieClicked(MovieInfo movieInfo) {
-        showMovieDetailFragment(movieInfo);
+        if (mIsTwoPanel) {
+            showMovieDetailFragment(movieInfo);
+        } else {
+            Intent intent = new Intent(this, MovieDetailActivity.class);
+            intent.putExtra(Constant.ExtraName.MOVIE_DATA, movieInfo);
+            startActivityForResult(intent, REQ_MOVIE_DETAIL);
+        }
     }
 
     @Override
-    public void onBackPressed() {
-        onBackOrClose();
+    public void onReturnFirstMovie(MovieInfo movieInfo) {
+        if (mIsTwoPanel) {
+            showMovieDetailFragment(movieInfo);
+        }
     }
 
-    private void onBackOrClose() {
-        if (mCurrentFg instanceof MovieListFragment) {
-            finish();
-            return;
+    private void showMovieDetailFragment(MovieInfo movieInfo) {
+        if (mDetailFragment == null) {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            mDetailFragment = new MovieDetailFragment();
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(Constant.ExtraName.MOVIE_DATA, movieInfo);
+            mDetailFragment.setArguments(bundle);
+            transaction.add(R.id.movie_detail_container, mDetailFragment).commitAllowingStateLoss();
+        } else {
+            mDetailFragment.showMovieDetail(movieInfo);
         }
+    }
 
-        if (mCurrentFg instanceof MovieDetailFragment) {
-            showMovieListFragment();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQ_MOVIE_DETAIL) { // 电影被收藏
+                mListFragment.getMovieListFromDb();
+            }
         }
     }
 }

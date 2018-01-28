@@ -51,6 +51,8 @@ public class MovieListFragment extends BaseFragment implements MovieListAdapter.
 
     public interface OnMovieClickListener {
         void onMovieClicked(MovieInfo movieInfo);
+
+        void onReturnFirstMovie(MovieInfo movieInfo);
     }
 
     @Override
@@ -176,11 +178,13 @@ public class MovieListFragment extends BaseFragment implements MovieListAdapter.
                     @Override
                     public void onNext(MovieListBean bean) {
                         mMovieInfoList = bean.getResults();
-                        showMovieList(mMovieInfoList);
                         saveFirstLoadSp();
 
                         if (ComUtils.isEmpty(mMovieInfoList)) {
                             mNoneDataTv.setVisibility(View.VISIBLE);
+                        } else {
+                            showMovieList(mMovieInfoList);
+                            mListener.onReturnFirstMovie(mMovieInfoList.get(0));
                         }
                     }
                 });
@@ -189,7 +193,7 @@ public class MovieListFragment extends BaseFragment implements MovieListAdapter.
     /**
      * 从本地数据库获取电影列表数据
      */
-    private void getMovieListFromDb() {
+    public void getMovieListFromDb() {
         MovieCpHelper.getInstance().getMovieList(mSortType, mOnlyCollected)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<List<MovieInfo>>() {
@@ -213,10 +217,12 @@ public class MovieListFragment extends BaseFragment implements MovieListAdapter.
                     @Override
                     public void onNext(List<MovieInfo> movieInfoList) {
                         mMovieInfoList = movieInfoList;
-                        showMovieList(mMovieInfoList);
 
                         if (ComUtils.isEmpty(movieInfoList)) {
                             mNoneDataTv.setVisibility(View.VISIBLE);
+                        } else {
+                            showMovieList(mMovieInfoList);
+                            mListener.onReturnFirstMovie(mMovieInfoList.get(0));
                         }
                     }
                 });
