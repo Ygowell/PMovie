@@ -23,12 +23,14 @@ import com.jam.pmovie.bean.MovieInfo;
 import com.jam.pmovie.bean.NoticeInfo;
 import com.jam.pmovie.common.ComUtils;
 import com.jam.pmovie.common.Constant;
+import com.jam.pmovie.data.MovieCpHelper;
 import com.jam.pmovie.http.AppApi;
 import com.jam.pmovie.http.UrlUtils;
 
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 
@@ -49,6 +51,8 @@ public class MovieDetailFragment extends BaseFragment {
     TextView mMovieOverviewTv;
     @BindView(R.id.iv_detail_movie_cover)
     ImageView mMovieCoverIv;
+    @BindView(R.id.iv_detail_collect)
+    ImageView mCollectIv;
     @BindView(R.id.tv_detail_movie_runtime)
     TextView mMovieRuntimeTv;
     @BindView(R.id.vs_notice)
@@ -60,10 +64,27 @@ public class MovieDetailFragment extends BaseFragment {
     private LinearLayout mCommentLayout;
     private Context mContext;
     private MovieInfo mMovieInfo;
+    private boolean mIsCollect;
+    private OnDetailActionListener mActionListener;
+
+    public interface OnDetailActionListener {
+        void onCollectClicked(boolean isCollect);
+    }
 
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_movie_detail;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mActionListener = (OnDetailActionListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnDetailActionListener");
+        }
     }
 
     @Override
@@ -79,6 +100,7 @@ public class MovieDetailFragment extends BaseFragment {
             return;
         }
 
+        mIsCollect = mMovieInfo.isCollected();
         showMovieDetail(mMovieInfo);
     }
 
@@ -91,6 +113,8 @@ public class MovieDetailFragment extends BaseFragment {
         mMovieRateTv.setText(getString(R.string.rated, String.valueOf(mMovieInfo.getVoteAverage())));
         mMovieReleaseDateTv.setText(getString(R.string.release_date, mMovieInfo.getReleaseDate()));
         mMovieOverviewTv.setText(mMovieInfo.getOverview());
+        mCollectIv.setImageResource(mIsCollect ? R.drawable.ic_detail_favorite : R.drawable.ic_detail_unfavorite);
+
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.centerCrop().placeholder(R.drawable.default_movie_icon)
                 .error(R.drawable.default_movie_icon);
@@ -102,6 +126,33 @@ public class MovieDetailFragment extends BaseFragment {
         reqMovieRuntime();
         reqMovieComments();
         reqMovieNotices();
+    }
+
+    @OnClick(R.id.iv_detail_collect)
+    public void onCollectClicked() {
+        mIsCollect = !mIsCollect;
+        MovieCpHelper.updateMovieCollectState(mMovieInfo.getId(),
+                mIsCollect ? 1 : 0).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<Boolean>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) { // Fail to update
+                        mIsCollect = !mIsCollect;
+                    }
+
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+                        if (aBoolean) {
+                            mCollectIv.setImageResource(mIsCollect ? R.drawable.ic_detail_favorite : R.drawable.ic_detail_unfavorite);
+                            mActionListener.onCollectClicked(mIsCollect);
+                        } else { // Fail to update
+                            mIsCollect = !mIsCollect;
+                        }
+                    }
+                });
     }
 
     private void reqMovieRuntime() {

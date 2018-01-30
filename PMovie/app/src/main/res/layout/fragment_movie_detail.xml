@@ -12,8 +12,8 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_medium"
-            android:layout_marginBottom="10dp">
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="@dimen/margin_medium">
 
             <TextView
                 android:id="@+id/tv_detail_movie_name"
@@ -24,6 +24,7 @@
                 android:gravity="center_vertical"
                 android:textColor="@color/black_3"
                 android:textSize="@dimen/text_large_size"
+                android:layout_toLeftOf="@+id/iv_detail_collect"
                 android:textStyle="bold"
                 tools:text="Chappie"/>
 
@@ -63,6 +64,15 @@
                 android:layout_marginRight="@dimen/margin_large"
                 android:layout_marginTop="@dimen/margin_large"
                 tools:text="时长：120分钟"/>
+
+            <ImageView
+                android:id="@+id/iv_detail_collect"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                tools:src="@drawable/ic_detail_favorite"/>
         </RelativeLayout>
 
         <View style="@style/divider_blank"/>

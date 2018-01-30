@@ -16,7 +16,8 @@ import com.jam.pmovie.common.Constant;
 import com.jam.pmovie.ui.detail.MovieDetailActivity;
 import com.jam.pmovie.ui.detail.MovieDetailFragment;
 
-public class MovieListActivity extends BaseActivity implements MovieListFragment.OnMovieClickListener {
+public class MovieListActivity extends BaseActivity implements MovieListFragment.OnMovieClickListener,
+        MovieDetailFragment.OnDetailActionListener{
 
     private ActionBar mActionBar;
     private MovieListFragment mListFragment;
@@ -125,5 +126,10 @@ public class MovieListActivity extends BaseActivity implements MovieListFragment
                 mListFragment.getMovieListFromDb();
             }
         }
+    }
+
+    @Override
+    public void onCollectClicked(boolean isCollect) {
+        mListFragment.getMovieListFromDb();
     }
 }
