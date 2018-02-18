@@ -36,7 +36,7 @@ public class MovieCpHelper {
         return mInstance;
     }
 
-    public static void saveMovieList(List<MovieInfo> movieInfoList) {
+    public void saveMovieList(List<MovieInfo> movieInfoList) {
         for (MovieInfo movieInfo : movieInfoList) {
             ContentValues values = new ContentValues();
             values.put(MovieEntity.CL_MOVIE_ID, movieInfo.getId());
@@ -108,10 +108,10 @@ public class MovieCpHelper {
 
                         return Observable.just(movieInfoList);
                     }
-                }).subscribeOn(Schedulers.io());
+                });
     }
 
-    public static Observable<Boolean> updateMovieCollectState(final long movieId, final int collect) {
+    public Observable<Boolean> updateMovieCollectState(final long movieId, final int collect) {
         return Observable.just("")
                 .flatMap(new Func1<String, Observable<Boolean>>() {
                              @Override

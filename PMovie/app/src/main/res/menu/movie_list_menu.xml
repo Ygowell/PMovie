@@ -5,8 +5,8 @@
           android:icon="@drawable/ic_autorenew"
           android:title=""
           app:showAsAction="always"/>
-    <item android:id="@+id/collect"
-          android:icon="@drawable/ic_unfavorite"
+    <item android:id="@+id/settings"
+          android:icon="@drawable/ic_settings"
           android:title=""
           app:showAsAction="always"/>
     <item android:id="@+id/popular"
@@ -14,5 +14,8 @@
           app:showAsAction="never"/>
     <item android:id="@+id/top_rated"
           android:title="@string/top_rated"
+          app:showAsAction="never"/>
+    <item android:id="@+id/collected"
+          android:title="@string/collect"
           app:showAsAction="never"/>
 </menu>

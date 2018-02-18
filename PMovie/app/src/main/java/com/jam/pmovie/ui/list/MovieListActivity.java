@@ -15,14 +15,14 @@ import com.jam.pmovie.bean.MovieInfo;
 import com.jam.pmovie.common.Constant;
 import com.jam.pmovie.ui.detail.MovieDetailActivity;
 import com.jam.pmovie.ui.detail.MovieDetailFragment;
+import com.jam.pmovie.ui.setting.SettingActivity;
 
 public class MovieListActivity extends BaseActivity implements MovieListFragment.OnMovieClickListener,
-        MovieDetailFragment.OnDetailActionListener{
+        MovieDetailFragment.OnDetailActionListener {
 
     private ActionBar mActionBar;
     private MovieListFragment mListFragment;
     private MovieDetailFragment mDetailFragment;
-    private boolean mOnlyCollected = false;
     private boolean mIsTwoPanel = false;
     private final static int REQ_MOVIE_DETAIL = 100;
 
@@ -69,10 +69,13 @@ public class MovieListActivity extends BaseActivity implements MovieListFragment
             case R.id.refresh:
                 mListFragment.refreshList();
                 break;
-            case R.id.collect:
-                mOnlyCollected = !mOnlyCollected;
-                item.setIcon(mOnlyCollected ? R.drawable.ic_favorite : R.drawable.ic_unfavorite);
-                mListFragment.changeCollectState(mOnlyCollected);
+            case R.id.settings:
+                startActivityForResult(new Intent(this, SettingActivity.class),
+                        Constant.REQ_SETTING);
+                break;
+            case R.id.collected:
+                mActionBar.setSubtitle(R.string.movie_list_collected);
+                mListFragment.changeCollectState(true);
                 break;
             case R.id.popular:
                 mActionBar.setSubtitle(R.string.movie_list_popular);

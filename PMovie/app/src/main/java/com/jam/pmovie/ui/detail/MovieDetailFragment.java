@@ -131,7 +131,7 @@ public class MovieDetailFragment extends BaseFragment {
     @OnClick(R.id.iv_detail_collect)
     public void onCollectClicked() {
         mIsCollect = !mIsCollect;
-        MovieCpHelper.updateMovieCollectState(mMovieInfo.getId(),
+        MovieCpHelper.getInstance().updateMovieCollectState(mMovieInfo.getId(),
                 mIsCollect ? 1 : 0).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Boolean>() {
                     @Override

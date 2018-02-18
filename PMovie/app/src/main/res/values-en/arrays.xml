@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="frequency_option">
+        <item>1h</item>
+        <item>6h</item>
+        <item>12h</item>
+        <item>1day</item>
+    </string-array>
+</resources>

@@ -10,10 +10,18 @@
     <string name="movie_list">电影列表</string>
     <string name="movie_list_popular">（按最受欢迎排序）</string>
     <string name="movie_list_top_rated">（按最佳评分排序）</string>
+    <string name="movie_list_collected">（按收藏排序）</string>
     <string name="movie_detail">电影详情</string>
     <string name="none_data">暂无数据</string>
     <string name="author">作者：%s</string>
     <string name="notice">预告片</string>
     <string name="comment">评论</string>
     <string name="not_found_browser">请安装浏览器来支持预告片的播放</string>
+    <string name="notification">通知</string>
+    <string name="movie_changed">电影有更新，快去查看吧！</string>
+    <string name="collect">收藏</string>
+    <string name="select_update_frequency">请选择更新频率</string>
+    <string name="update_frequency">定时更新频率</string>
+    <string name="every_day">每天</string>
+    <string name="loading">加载中...</string>
 </resources>
